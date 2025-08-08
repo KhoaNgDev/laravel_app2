@@ -18,7 +18,7 @@ return new class extends Migration {
             $table->foreignId('service_id')->constrained('services');
             $table->dateTime('booking_start');
             $table->dateTime('booking_end');
-            $table->text('note');
+
             $table->enum('status', ['confirmed', 'canceled','completed'])->default('confirmed');
             $table->timestamps();
         });

@@ -14,6 +14,9 @@ class Service extends Model
         'description',
         'duration',
     ];
+    protected $casts = [
+        'duration' => 'integer',
+    ];
 
     public function bookings()
     {

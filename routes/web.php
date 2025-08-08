@@ -17,7 +17,7 @@ Route::controller(HomepageController::class)
     });
 Route::get('/test-mail', function () {
     Mail::raw('Test gửi mail thành công!', function ($message) {
-        $message->to('nguyen.anh.khoa.rcvn2012@gmail.com')
+        $message->to('nganhkhoa.becloud@gmail.com')
             ->subject('Thử gửi mail từ Laravel');
     });
 

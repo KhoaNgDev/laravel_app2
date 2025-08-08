@@ -4,6 +4,7 @@ use App\Http\Controllers\Frontend\BookingController;
 use App\Http\Controllers\Frontend\ContactController;
 use App\Http\Controllers\Frontend\AboutController;
 use App\Http\Controllers\Frontend\HomepageController;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
 
 
@@ -14,6 +15,14 @@ Route::controller(HomepageController::class)
     ->group(function () {
         Route::get('/', 'Homepage')->name('homepage');
     });
+Route::get('/test-mail', function () {
+    Mail::raw('Test gửi mail thành công!', function ($message) {
+        $message->to('nguyen.anh.khoa.rcvn2012@gmail.com')
+            ->subject('Thử gửi mail từ Laravel');
+    });
+
+    return 'Đã gửi mail!';
+});
 Route::controller(BookingController::class)
     ->prefix('/booking')
     ->group(function () {

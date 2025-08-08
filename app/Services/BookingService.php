@@ -24,8 +24,18 @@ class BookingService
             $customer = $this->createOrGetCustomer($request);
 
             $start = Carbon::createFromFormat('Y-m-d H:i', $request->booking_date . ' ' . $request->booking_time, 'Asia/Ho_Chi_Minh');
-            $duration = (int) (Service::find($request->service_id)->duration ?? 20);
+
+            $service = Service::find($request->service_id);
+            if (!$service) {
+                return [
+                    'status' => false,
+                    'message' => 'Dịch vụ không tồn tại.'
+                ];
+            }
+
+            $duration = (int) ($service->duration ?? 20);
             $end = (clone $start)->addMinutes($duration);
+
             if (!$this->withinWorkingHours($end)) {
                 return [
                     'status' => false,
@@ -72,10 +82,21 @@ class BookingService
             return ['status' => false, 'message' => 'Không còn slot trống phù hợp.'];
         } catch (Exception $e) {
             DB::rollBack();
-            Log::error('Booking error', ['error' => $e->getMessage()]);
-            return ['status' => false, 'message' => 'Lỗi hệ thống.'];
+
+            Log::error('Booking error', [
+                'message' => $e->getMessage(),
+                'line' => $e->getLine(),
+                'file' => $e->getFile(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            return [
+                'status' => false,
+                'message' => 'Đã xảy ra lỗi: ' . $e->getMessage()
+            ];
         }
     }
+
 
     public function getAvailableTimes($date, $serviceId)
     {

@@ -78,8 +78,8 @@
 
 
                                         <div class="form-group col-md-12 mb-4">
-                                            <input type="email" name="customer_email" class="form-control" placeholder="Email"
-                                                required>
+                                            <input type="email" name="customer_email" class="form-control"
+                                                placeholder="Email" required>
                                         </div>
                                         <div class="form-group col-md-6 mb-4">
                                             <input type="date" name="booking_date" id="booking_date" class="form-control"
@@ -87,7 +87,8 @@
 
                                         </div>
                                         <div class="form-group col-md-6 mb-4" id="service_wrapper" style="display: none;">
-                                            <select name="service_id" id="service_id" class="form-select selectric" required>
+                                            <select name="service_id" id="service_id" class="form-select selectric"
+                                                required>
                                                 <option value="">-- Chọn dịch vụ --</option>
                                             </select>
                                         </div>
@@ -101,8 +102,13 @@
 
 
                                         <div class="col-md-12">
-                                            <button type="submit" class="btn-default">Đặt lịch ngay</button>
+                                            <button type="submit" class="btn-default" id="submitBtn">Đặt lịch ngay</button>
+                                            <button type="button" class="btn-default" id="loadingBtn"
+                                                style="display: none;" disabled>
+                                                Đang đặt lịch...
+                                            </button>
                                         </div>
+
                                     </div>
                                 </form>
                             </div>
@@ -123,6 +129,7 @@
             });
 
             $(document).ready(function() {
+
                 $('#booking_date').on('change', function() {
                     const date = $(this).val();
 
@@ -181,6 +188,12 @@
                         });
                     }
                 });
+
+                $('form').on('submit', function(e) {
+                    $('#submitBtn').hide(); 
+                    $('#loadingBtn').show();
+                });
+
             });
         </script>
     @endpush

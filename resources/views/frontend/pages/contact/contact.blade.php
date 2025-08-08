@@ -99,7 +99,9 @@
 
 
                                     <div class="col-md-12">
-                                        <button type="submit" class="btn-default">send message</button>
+                                        <button type="submit" class="btn-default">Gửi Liên Hệ <span
+                                                class="spinner-border spinner-border-sm d-none" role="status"
+                                                id="loadingSpinner"></span></button>
                                         <div id="msgSubmit" class="h3 hidden"></div>
                                     </div>
                                 </div>
@@ -128,6 +130,13 @@
             if (!/^(0[3|5|7|8|9])[0-9]{0,9}$/.test(pasted)) {
                 e.preventDefault();
             }
+        });
+        document.getElementById('contactForm').addEventListener('submit', function() {
+            const btn = document.getElementById('submitBtn');
+            const spinner = document.getElementById('loadingSpinner');
+
+            btn.setAttribute('disabled', 'true');
+            spinner.classList.remove('d-none');
         });
     </script>
 @endpush

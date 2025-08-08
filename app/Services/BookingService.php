@@ -24,7 +24,7 @@ class BookingService
             $customer = $this->createOrGetCustomer($request);
 
             $start = Carbon::createFromFormat('Y-m-d H:i', $request->booking_date . ' ' . $request->booking_time, 'Asia/Ho_Chi_Minh');
-            $duration = Service::find($request->service_id)->duration ?? 20;
+            $duration = (int) (Service::find($request->service_id)->duration ?? 20);
             $end = (clone $start)->addMinutes($duration);
             if (!$this->withinWorkingHours($end)) {
                 return [
@@ -83,7 +83,7 @@ class BookingService
         if (!$date || !$service)
             return [];
 
-        $duration = $service->duration ?? 20;
+        $duration = (int) ($service->duration ?? 20);
         $slotUnit = 20;
 
         $workingSlots = $this->generateTimeSlotsForDay($date);

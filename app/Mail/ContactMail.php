@@ -27,7 +27,7 @@ class ContactMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Đơn đặt lịch của bạn đã được chúng tôi xác nhận nhé.',
+            subject: 'Chúng tôi đã nhận được liên hệ của bạn. Xin cảm ơn vì đã đánh giá.',
         );
     }
 

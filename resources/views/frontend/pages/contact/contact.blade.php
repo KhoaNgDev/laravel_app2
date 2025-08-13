@@ -99,9 +99,11 @@
 
 
                                     <div class="col-md-12">
-                                        <button type="submit" class="btn-default">Gửi Liên Hệ <span
-                                                class="spinner-border spinner-border-sm d-none" role="status"
-                                                id="loadingSpinner"></span></button>
+                                        <button type="submit" class="btn-default" id="submitBtn">Gửi Liên Hệ
+                                            <span class="spinner-border spinner-border-sm d-none" role="status"
+                                                id="loadingSpinner"></span>
+                                        </button>
+
                                         <div id="msgSubmit" class="h3 hidden"></div>
                                     </div>
                                 </div>

@@ -27,3 +27,5 @@
  <script src="{{ asset('fe/js/wow.min.js') }}"></script>
  <!-- Main Custom js file -->
  <script src="{{ asset('fe/js/function.js') }}"></script>
+
+ @stack('scripts')

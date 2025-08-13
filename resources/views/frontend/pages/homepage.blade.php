@@ -11,9 +11,19 @@
                         </div>
 
                         <div class="hero-btn wow fadeInUp" data-wow-delay="0.2s">
-                            <a href="{{ route('booking') }}" class="btn-default">Đặt lịch ngay</a>
-                            <a href="{{ route('contact') }}" class="btn-default btn-highlighted">Liên hệ ngay</a>
+                            <a href="{{ route('booking') }}" class="btn-default" id="btnBooking">Đặt lịch ngay</a>
+                            <a href="{{ route('contact') }}" class="btn-default btn-highlighted" id="btnContact">Liên hệ
+                                ngay</a>
                         </div>
+
+                        <style>
+                            .disabled {
+                                cursor: not-allowed !important;
+                                opacity: 0.6;
+                                user-select: none;
+                            }
+                        </style>
+
 
                         <div class="hero-list wow fadeInUp" data-wow-delay="0.4s">
                             <ul>
@@ -529,7 +539,7 @@
                             <div class="team-image">
                                 <a href="#" data-cursor-text="Xem">
                                     <figure class="image-anime">
-                                        <img src="{{ $technician->photo ? asset( $technician->photo) : asset('fe/images/team-1.jpg') }}"
+                                        <img src="{{ $technician->photo ? asset($technician->photo) : asset('fe/images/team-1.jpg') }}"
                                             alt="{{ $technician->name }}">
                                     </figure>
                                 </a>
@@ -645,3 +655,33 @@
         </div>
     </div>
 @endsection
+@push('scripts')
+    <script type="text/javascript">
+        document.addEventListener("DOMContentLoaded", function() {
+            const btnBooking = document.getElementById('btnBooking');
+            const btnContact = document.getElementById('btnContact');
+
+            function setLoading(btn) {
+                btn.classList.add('disabled');
+                btn.style.pointerEvents = 'none';
+                btn.textContent = 'Đang tải...';
+                btn.href = 'javascript:void(0)';
+            }
+
+            function resetButton(btn, text, href) {
+                btn.classList.remove('disabled');
+                btn.style.pointerEvents = 'auto';
+                btn.textContent = text;
+                btn.href = href;
+            }
+
+            setLoading(btnBooking);
+            setLoading(btnContact);
+
+            setTimeout(() => {
+                resetButton(btnBooking, 'Đặt lịch ngay', '{{ route('booking') }}');
+                resetButton(btnContact, 'Liên hệ ngay', '{{ route('contact') }}');
+            }, 2000);
+        });
+    </script>
+@endpush

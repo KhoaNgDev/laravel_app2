@@ -118,27 +118,39 @@
 @endsection
 @push('scripts')
     <script type="text/javascript">
-        const phoneInput = document.getElementById('phone');
+        $(document).ready(function() {
+            $('#submitBtn').prop('disabled', true);
 
-        phoneInput.addEventListener('keypress', function(e) {
-            const char = String.fromCharCode(e.which);
-            if (!/[0-9]/.test(char)) {
-                e.preventDefault();
+            function checkFormValid() {
+                const name = $('#name').val().trim();
+                const phone = $('#phone').val().trim();
+                const email = $('#email').val().trim();
+                const rating = $('#rating').val();
+
+                if (name && phone && email && rating) {
+                    $('#submitBtn').prop('disabled', false);
+                } else {
+                    $('#submitBtn').prop('disabled', true);
+                }
             }
-        });
 
-        phoneInput.addEventListener('paste', function(e) {
-            const pasted = (e.clipboardData || window.clipboardData).getData('text');
-            if (!/^(0[3|5|7|8|9])[0-9]{0,9}$/.test(pasted)) {
-                e.preventDefault();
-            }
-        });
-        document.getElementById('contactForm').addEventListener('submit', function() {
-            const btn = document.getElementById('submitBtn');
-            const spinner = document.getElementById('loadingSpinner');
+            $('#name, #phone, #email, #rating').on('input change', checkFormValid);
+            checkFormValid();
 
-            btn.setAttribute('disabled', 'true');
-            spinner.classList.remove('d-none');
+            $('#contactForm').on('submit', function() {
+                $('#submitBtn').attr('disabled', true);
+                $('#loadingSpinner').removeClass('d-none');
+            });
+
+            const phoneInput = document.getElementById('phone');
+            phoneInput.addEventListener('keypress', function(e) {
+                const char = String.fromCharCode(e.which);
+                if (!/[0-9]/.test(char)) e.preventDefault();
+            });
+            phoneInput.addEventListener('paste', function(e) {
+                const pasted = (e.clipboardData || window.clipboardData).getData('text');
+                if (!/^(0[3|5|7|8|9])[0-9]{0,9}$/.test(pasted)) e.preventDefault();
+            });
         });
     </script>
 @endpush

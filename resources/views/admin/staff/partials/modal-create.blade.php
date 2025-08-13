@@ -113,13 +113,7 @@
                         });
                     }
                 })
-                .catch(err => {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Lỗi',
-                        text: 'Không thể kết nối tới server!'
-                    });
-                })
+              
                 .finally(() => {
                     btn.disabled = false;
                 });

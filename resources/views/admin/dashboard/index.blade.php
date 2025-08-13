@@ -6,8 +6,7 @@
  
 @include('admin.dashboard.partials.filter')
 @include('admin.dashboard.partials.result')
-@include('admin.dashboard.partials.table-bookings')
 @include('admin.dashboard.partials.table-contacts')
-
+@include('admin.dashboard.partials.table-bookings')
 
 @endsection

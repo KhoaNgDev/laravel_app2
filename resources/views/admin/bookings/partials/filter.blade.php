@@ -91,12 +91,39 @@
             setTimeout(() => this.submit(), 10);
         });
 
-        // Loading khi click export Excel
         const exportBtn = document.getElementById('exportBtn');
-        exportBtn.addEventListener('click', function(e) {
-            // Thêm spinner + disable
+
+        exportBtn.addEventListener('click', async function(e) {
+            e.preventDefault();
+
             this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang xuất...';
             this.classList.add('disabled');
+
+            try {
+                const response = await fetch(this.href, {
+                    method: 'GET',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                });
+
+                if (!response.ok) throw new Error('Không thể xuất Excel');
+
+                const blob = await response.blob();
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'bookings.xlsx'; // đặt tên file
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+                window.URL.revokeObjectURL(url);
+            } catch (err) {
+                alert(err.message);
+            } finally {
+                this.innerHTML = '<i class="fas fa-file-excel"></i> Xuất Excel';
+                this.classList.remove('disabled');
+            }
         });
     </script>
 @endpush

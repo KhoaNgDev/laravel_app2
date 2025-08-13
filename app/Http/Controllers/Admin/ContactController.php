@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Mail;
 
 class ContactController extends Controller
 {
-       protected $brevoService;
+    protected $brevoService;
 
     public function __construct(BrevoService $brevoService)
     {
@@ -71,28 +71,30 @@ class ContactController extends Controller
         return redirect()->route('admin.contacts.show', $testimonial->id)
             ->with('success', 'Cập nhật đánh giá thành công.');
     }
-     public function reply(Request $request, $id)
+    public function reply(Request $request, $id)
     {
         $request->validate([
             'admin_note' => 'required|string|min:5',
         ]);
 
-        $data = Testimonial::findOrFail($id);
-        $data->admin_note = $request->admin_note;
-        $data->status = 'responded';
-        $data->save();
+        $testimonial = Testimonial::findOrFail($id);
+        $testimonial->admin_note = $request->admin_note;
+        $testimonial->status = 'responded';
+        $testimonial->save();
 
         $subject = 'Phản hồi từ Admin';
-        $content = view('mail.contact_reply', compact('data'))->render();
+
+        $content = view('mail.contact_reply', compact('testimonial'))->render();
 
         $this->brevoService->sendEmail(
-            $data->email,       
+            $testimonial->email,
             $subject,
             $content
         );
 
         return response()->json(['message' => 'Phản hồi đã được gửi thành công']);
     }
+
 
 
 }

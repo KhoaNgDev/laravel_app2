@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Mail;
 
 class ContactController extends Controller
 {
-       protected $brevoService;
+    protected $brevoService;
 
     public function __construct(BrevoService $brevoService)
     {
@@ -71,27 +71,51 @@ class ContactController extends Controller
         return redirect()->route('admin.contacts.show', $testimonial->id)
             ->with('success', 'Cập nhật đánh giá thành công.');
     }
-     public function reply(Request $request, $id)
+    public function reply(Request $request, $id)
     {
-        $request->validate([
-            'admin_note' => 'required|string|min:5',
-        ]);
+        try {
+            $request->validate([
+                'admin_note' => 'required|string|min:5',
+            ], [
+                'admin_note.required' => 'Vui lòng nhập nội dung phản hồi',
+                'admin_note.string' => 'Nội dung phản hồi phải là chuỗi',
+                'admin_note.min' => 'Nội dung phản hồi phải ít nhất 5 ký tự',
+            ]);
 
-        $data = Testimonial::findOrFail($id);
-        $data->admin_note = $request->admin_note;
-        $data->status = 'responded';
-        $data->save();
 
-        $subject = 'Phản hồi từ Admin';
-        $content = view('mail.contact_reply', compact('data'))->render();
+            $data = Testimonial::findOrFail($id);
+            $data->admin_note = $request->admin_note;
+            $data->status = 'responded';
+            $data->save();
 
-        $this->brevoService->sendEmail(
-            $data->email,       
-            $subject,
-            $content
-        );
+            // Gửi email
+            $subject = 'Phản hồi từ Admin';
+            $content = view('mail.contact_reply', compact('data'))->render();
 
-        return response()->json(['message' => 'Phản hồi đã được gửi thành công']);
+            $this->brevoService->sendEmail(
+                $data->email,
+                $subject,
+                $content
+            );
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Phản hồi đã được gửi thành công'
+            ], 200);
+
+        } catch (\Illuminate\Validation\ValidationException $ve) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Dữ liệu không hợp lệ',
+                'errors' => $ve->errors()
+            ], 422);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Có lỗi xảy ra: ' . $e->getMessage()
+            ], 500);
+        }
     }
 
 

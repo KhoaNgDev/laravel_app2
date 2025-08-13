@@ -61,15 +61,16 @@
             </div>
         </form>
     </div>
-</div>
-@push('scripts')
-    <script type="text/javascript">
-     document.querySelector('#addUserModal form').addEventListener('submit', async function(e) {
+</div>@push('scripts')
+<script type="text/javascript">
+document.querySelector('#addUserModal form').addEventListener('submit', async function(e) {
     e.preventDefault();
 
     const form = e.target;
     const btn = form.querySelector('#saveBtn');
     btn.disabled = true;
+    const originalBtnText = btn.innerHTML;
+    btn.innerHTML = 'Đang tải...';
 
     Swal.fire({
         title: 'Đang xử lý...',
@@ -88,7 +89,9 @@
         try {
             data = await res.json();
         } catch {
-            data = { message: 'Người dùng đã được tạo (server trả về redirect HTML).' };
+            data = {
+                message: 'Người dùng đã được tạo (server trả về redirect HTML).'
+            };
         }
 
         if (res.ok) {
@@ -97,6 +100,7 @@
                 title: 'Thêm người dùng thành công',
                 text: data.message
             });
+
             form.reset();
             const modal = bootstrap.Modal.getInstance(document.getElementById('addUserModal'));
             modal.hide();
@@ -115,6 +119,7 @@
                 html: errorText.replace(/\n/g, '<br>')
             });
         }
+
     } catch (err) {
         Swal.fire({
             icon: 'error',
@@ -123,7 +128,8 @@
         });
     } finally {
         btn.disabled = false;
+        btn.innerHTML = originalBtnText; // reset text nút
     }
 });
-
+</script>
 @endpush

@@ -52,9 +52,22 @@
           </ul>
 
           <div class="mt-4 mb-4 p-3 hide-sidebar-mini">
-              <a href="{{ route('admin.logouts') }}" class="btn btn-primary btn-lg btn-block btn-icon-split">
+              <a href="{{ route('admin.logouts') }}"
+                  class="btn btn-primary btn-lg btn-block btn-icon-split btn-loading">
                   <i class="fas fa-rocket"></i> Đăng xuất
               </a>
           </div>
+
       </aside>
   </div>
+  <script type="text/javascript">
+      document.querySelectorAll('.btn-loading').forEach(btn => {
+          btn.addEventListener('click', function(e) {
+              if (btn.tagName.toLowerCase() === 'a') {
+                  e.preventDefault();
+                  setLoading(btn);
+                  window.location.href = btn.href;
+              }
+          });
+      });
+  </script>

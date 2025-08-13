@@ -87,7 +87,6 @@ class ContactController extends Controller
 
         $this->brevoService->sendEmail(
             $data->email,       
-            $data->name ?? 'Quý khách hàng', 
             $subject,
             $content
         );

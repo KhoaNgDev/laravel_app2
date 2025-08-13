@@ -47,7 +47,7 @@ class ContactController extends Controller
                     'subject' => 'Cảm ơn bạn đã liên hệ',
                     'sender' => ['name' => config('mail.from.name'), 'email' => config('mail.from.address')],
                     'to' => [['email' => $contact->email, 'name' => $contact->name]],
-                    'htmlContent' => view('emails.contact', compact('contact'))->render(),
+                    'htmlContent' => view('mail.contact_mail', compact('contact'))->render(),
                 ]);
 
                 $apiInstance->sendTransacEmail($sendSmtpEmail);

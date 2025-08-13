@@ -18,8 +18,9 @@
                             </ul>
                         </div>
                         <div class="header-btn d-inline-flex">
-                            <a href="{{ route('booking') }}" class="btn-default">Đặt lịch ngay</a>
+                            <a id="btnHeaderBooking" href="{{ route('booking') }}" class="btn-default">Đặt lịch ngay</a>
                         </div>
+
                     </div>
                     <div class="navbar-toggle"></div>
                 </div>

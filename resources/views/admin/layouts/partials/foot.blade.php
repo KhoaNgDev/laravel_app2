@@ -26,31 +26,31 @@ document.addEventListener("DOMContentLoaded", function() {
     function setLoading(btn, text = 'Đang tải...') {
         btn.classList.add('disabled');
         btn.style.pointerEvents = 'none';
-        if(!btn.dataset.originalText) {
-            btn.dataset.originalText = btn.textContent;
+        if (!btn.dataset.originalHtml) {
+            btn.dataset.originalHtml = btn.innerHTML; // lưu innerHTML thay vì textContent
         }
-        btn.textContent = text;
+        btn.innerHTML = text;
     }
 
     function resetButton(btn) {
         btn.classList.remove('disabled');
         btn.style.pointerEvents = 'auto';
-        if(btn.dataset.originalText){
-            btn.textContent = btn.dataset.originalText;
+        if (btn.dataset.originalHtml) {
+            btn.innerHTML = btn.dataset.originalHtml;
         }
     }
 
     buttons.forEach(btn => {
         const form = btn.closest('form');
-        if(!form) return;
+        if (!form) return;
 
-        form.addEventListener('submit', function(e){
+        form.addEventListener('submit', function(e) {
             let firstInvalid = null;
             const requiredFields = form.querySelectorAll('input[required], textarea[required], select[required]');
 
             requiredFields.forEach(field => {
-                if(!field.value.trim()){
-                    if(!firstInvalid) firstInvalid = field;
+                if (!field.value.trim()) {
+                    if (!firstInvalid) firstInvalid = field;
                     const label = form.querySelector(`label[for="${field.id}"]`)?.textContent || field.name;
                     Swal.fire({
                         icon: 'warning',
@@ -61,7 +61,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 }
             });
 
-            if(firstInvalid){
+            if (firstInvalid) {
                 e.preventDefault();
                 firstInvalid.focus();
                 return false;
@@ -77,6 +77,7 @@ document.addEventListener("DOMContentLoaded", function() {
         buttons.forEach(btn => resetButton(btn));
     @endif
 });
+
 </script>
 
 

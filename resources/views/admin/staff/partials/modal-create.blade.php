@@ -61,75 +61,79 @@
             </div>
         </form>
     </div>
-</div>@push('scripts')
-<script type="text/javascript">
-document.querySelector('#addUserModal form').addEventListener('submit', async function(e) {
-    e.preventDefault();
+</div>
+@push('scripts')
+    <script type="text/javascript">
+        document.querySelector('#addUserModal form').addEventListener('submit', async function(e) {
+            e.preventDefault();
 
-    const form = e.target;
-    const btn = form.querySelector('#saveBtn');
-    btn.disabled = true;
-    const originalBtnText = btn.innerHTML;
-    btn.innerHTML = 'Đang tải...';
+            const form = e.target;
+            const btn = form.querySelector('#saveBtn');
+            btn.disabled = true;
+            const originalBtnText = btn.innerHTML;
+            btn.innerHTML = 'Đang tải...';
 
-    Swal.fire({
-        title: 'Đang xử lý...',
-        text: 'Vui lòng chờ trong giây lát',
-        allowOutsideClick: false,
-        didOpen: () => Swal.showLoading()
-    });
-
-    try {
-        const res = await fetch(form.action, {
-            method: form.method,
-            body: new FormData(form)
-        });
-
-        let data = {};
-        try {
-            data = await res.json();
-        } catch {
-            data = {
-                message: 'Người dùng đã được tạo (server trả về redirect HTML).'
-            };
-        }
-
-        if (res.ok) {
             Swal.fire({
-                icon: 'success',
-                title: 'Thêm người dùng thành công',
-                text: data.message
+                title: 'Đang xử lý...',
+                text: 'Vui lòng chờ trong giây lát',
+                allowOutsideClick: false,
+                didOpen: () => Swal.showLoading()
             });
 
-            form.reset();
-            const modal = bootstrap.Modal.getInstance(document.getElementById('addUserModal'));
-            modal.hide();
-        } else {
-            let errorText = '';
-            if (data.errors) {
-                for (const key in data.errors) {
-                    errorText += `${data.errors[key].join(', ')}\n`;
+            try {
+                const res = await fetch(form.action, {
+                    method: form.method,
+                    body: new FormData(form)
+                });
+
+                let data = {};
+                try {
+                    data = await res.json();
+                } catch {
+                    data = {
+                        message: 'Người dùng đã được tạo.'
+                    };
                 }
-            } else {
-                errorText = data.message || 'Có lỗi xảy ra!';
-            }
-            Swal.fire({
-                icon: 'error',
-                title: 'Lỗi',
-                html: errorText.replace(/\n/g, '<br>')
-            });
-        }
 
-    } catch (err) {
-        Swal.fire({
-            icon: 'error',
-            title: 'Lỗi',
-            text: 'Không thể kết nối tới server!'
+                if (res.ok) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Thêm người dùng thành công',
+                        text: data.message
+                    }).then(() => {
+                        // reload trang sau khi người dùng nhấn OK
+                        location.reload();
+                    });
+
+                    form.reset();
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('addUserModal'));
+                    modal.hide();
+                } else {
+                    let errorText = '';
+                    if (data.errors) {
+                        for (const key in data.errors) {
+                            errorText += `${data.errors[key].join(', ')}\n`;
+                        }
+                    } else {
+                        errorText = data.message || 'Có lỗi xảy ra!';
+                    }
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Lỗi',
+                        html: errorText.replace(/\n/g, '<br>')
+                    });
+                }
+
+            } catch (err) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Lỗi',
+                    text: 'Không thể kết nối tới máy chủ!'
+                });
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = originalBtnText; // reset text nút
+            }
         });
-    } finally {
-        btn.disabled = false;
-        btn.innerHTML = originalBtnText; // reset text nút
-    }
-});
-</script>
+    </script>
 @endpush

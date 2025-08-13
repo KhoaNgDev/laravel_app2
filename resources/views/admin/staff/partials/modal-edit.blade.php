@@ -57,9 +57,39 @@
 
             </div>
             <div class="modal-footer">
-                <button type="submit" class="btn btn-primary">Cập nhật</button>
+                <button type="submit" class="btn btn-primary" id="saveBtn">Cập Nhập</button>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
             </div>
+
+            <script>
+                document.getElementById('saveBtn').addEventListener('click', function(e) {
+                    const btn = e.target;
+                    btn.disabled = true;
+                    btn.innerHTML = 'Đang tải...';
+
+                    // Giả sử submit form bằng AJAX
+                    const form = btn.closest('form');
+                    fetch(form.action, {
+                            method: form.method,
+                            body: new FormData(form)
+                        })
+                        .then(res => res.json())
+                        .then(data => {
+                            btn.disabled = false;
+                            btn.innerHTML = 'Lưu';
+                            // xử lý kết quả
+                            console.log(data);
+                        })
+                        .catch(err => {
+                            btn.disabled = false;
+                            btn.innerHTML = 'Lưu';
+                            alert('Có lỗi xảy ra!');
+                        });
+
+                    e.preventDefault(); // ngăn form submit mặc định
+                });
+            </script>
+
         </form>
     </div>
 </div>

@@ -71,7 +71,6 @@
             const btn = form.querySelector('#saveBtn');
             btn.disabled = true;
 
-            // SweetAlert loading
             Swal.fire({
                 title: 'Đang xử lý...',
                 text: 'Vui lòng chờ trong giây lát',
@@ -84,7 +83,14 @@
                     body: new FormData(form)
                 })
                 .then(async res => {
-                    const data = await res.json();
+                    let data = {};
+                    try {
+                        data = await res.json();
+                    } catch (err) {
+                        data = {
+                            message: await res.text()
+                        };
+                    }
 
                     if (res.ok) {
                         Swal.fire({
@@ -92,12 +98,10 @@
                             title: 'Thêm người dùng thành công',
                             text: data.message || 'Người dùng đã được tạo.'
                         });
-
-                        form.reset(); // Reset form
+                        form.reset();
                         const modal = bootstrap.Modal.getInstance(document.getElementById('addUserModal'));
                         modal.hide();
                     } else {
-                        // Hiển thị lỗi validation từ Laravel
                         let errorText = '';
                         if (data.errors) {
                             for (const key in data.errors) {
@@ -113,7 +117,13 @@
                         });
                     }
                 })
-              
+                .catch(err => {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Lỗi',
+                        text: 'Không thể kết nối tới server!'
+                    });
+                })
                 .finally(() => {
                     btn.disabled = false;
                 });

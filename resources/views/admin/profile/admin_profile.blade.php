@@ -127,7 +127,7 @@
                     </div>
 
                     <div class="card-footer text-right">
-                        <button type="submit" class="btn btn-primary btn-loading">Lưu thay đổi</button>
+                        <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
                     </div>
                 </form>
             </div>
@@ -135,8 +135,9 @@
     </div>
 
     @push('scripts')
-        <script>
+        <script type="text/javascript">
             $(document).ready(function() {
+                // Preview ảnh
                 $('#image').change(function(e) {
                     const reader = new FileReader();
                     const file = e.target.files[0];
@@ -158,7 +159,7 @@
                     $(this).addClass('d-none');
                 });
 
-                document.querySelector('input[name="photo"]').addEventListener('change', function(e) {
+                $('input[name="photo"]').on('change', function(e) {
                     const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg'];
                     const file = e.target.files[0];
                     if (file && !allowedTypes.includes(file.type)) {
@@ -166,6 +167,48 @@
                         e.target.value = '';
                     }
                 });
+
+                // Nút loading
+                const form = $('form.needs-validation')[0];
+                const btn = form.querySelector('.btn-loading');
+                form.addEventListener('submit', function(e) {
+                    let firstInvalid = null;
+                    const requiredFields = form.querySelectorAll(
+                        'input[required], textarea[required], select[required]');
+
+                    requiredFields.forEach(field => {
+                        if (!field.value.trim()) {
+                            if (!firstInvalid) firstInvalid = field;
+                            const label = form.querySelector(`label[for="${field.id}"]`)?.textContent ||
+                                field.name;
+                            Swal.fire({
+                                icon: 'warning',
+                                title: 'Thiếu thông tin',
+                                text: `Vui lòng nhập trường "${label}"`,
+                                confirmButtonText: 'OK'
+                            });
+                        }
+                    });
+
+                    if (firstInvalid) {
+                        e.preventDefault();
+                        firstInvalid.focus();
+                        return false;
+                    }
+
+                    // Nếu hợp lệ, hiển thị đang tải
+                    if (!btn.dataset.originalText) btn.dataset.originalText = btn.innerHTML;
+                    btn.innerHTML = 'Đang tải...';
+                    btn.classList.add('disabled');
+                    btn.style.pointerEvents = 'none';
+                });
+
+                // Reset nếu có lỗi server
+                @if ($errors->any() || session('error'))
+                    if (btn.dataset.originalText) btn.innerHTML = btn.dataset.originalText;
+                    btn.classList.remove('disabled');
+                    btn.style.pointerEvents = 'auto';
+                @endif
             });
         </script>
     @endpush

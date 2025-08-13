@@ -49,7 +49,6 @@
                         <label for="group_role" class="form-label">Vai trò</label>
                         <select name="group_role" id="group_role" class="form-select selectric" required>
                             <option value="User">User</option>
-                            <option value="Admin">Admin</option>
                         </select>
                     </div>
                 </div>

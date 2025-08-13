@@ -50,7 +50,6 @@
                         <label for="edit-group_role" class="form-label">Vai trò</label>
                         <select name="group_role" id="edit-group_role" class="form-select selectric" required>
                             <option value="User">User</option>
-                            <option value="Admin">Admin</option>
                         </select>
                     </div>
                 </div>
@@ -94,14 +93,17 @@
                         Swal.fire({
                             icon: 'success',
                             title: 'Cập nhật thành công',
-                            text: data.message || 'Thông tin người dùng đã được cập nhật.'
+                            text: data.message || 'Thông tin người dùng đã được cập nhật.',
+                            timer: 1500, 
+                            showConfirmButton: false,
+                            didClose: () => {
+                                form.reset();
+                                const modal = bootstrap.Modal.getInstance(document
+                                    .getElementById('editUserModal'));
+                                modal.hide();
+                            }
                         });
-                        // Có thể reset form hoặc đóng modal
-                        form.reset();
-                        const modal = bootstrap.Modal.getInstance(document.getElementById('editUserModal'));
-                        modal.hide();
                     } else {
-                        // Nếu trả về lỗi validation từ Laravel
                         let errorText = '';
                         if (data.errors) {
                             for (const key in data.errors) {
@@ -117,7 +119,7 @@
                         });
                     }
                 })
-            
+
                 .finally(() => {
                     btn.disabled = false;
                 });

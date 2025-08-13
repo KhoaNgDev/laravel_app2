@@ -36,7 +36,7 @@ class ContactController extends Controller
 
             if (!empty($contact->email)) {
                 $config = Configuration::getDefaultConfiguration()
-                    ->setApiKey('api-key', config('services.brevo.key'));
+                    ->setApiKey('api-key', config('services.brevo.api_key'));
 
                 $apiInstance = new TransactionalEmailsApi(
                     new \GuzzleHttp\Client(),

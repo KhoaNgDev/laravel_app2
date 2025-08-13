@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use Illuminate\Support\Facades\Log;
 use SendinBlue\Client\Configuration;
 use SendinBlue\Client\Api\TransactionalEmailsApi;
 use SendinBlue\Client\Model\SendSmtpEmail;
@@ -30,6 +31,9 @@ class BrevoService
             'htmlContent' => $htmlContent,
         ]);
 
-        return $this->api->sendTransacEmail($sendSmtpEmail);
+        $response = $this->api->sendTransacEmail($sendSmtpEmail);
+        Log::info('Brevo API Response', ['response' => $response]);
+        return $response;
+
     }
 }

@@ -39,8 +39,14 @@ class BookingController extends Controller
                     $this->brevoService->sendEmail(
                         $result['booking']->customer->customer_email,
                         'Xác nhận đặt lịch',
-                        view('mail.booking_mail', ['booking' => $result['booking']])->render()
+                        view('mail.booking_mail', [
+                            'booking' => $result['booking'],
+                            'dateBooking' => optional($result['booking']->slots->sortBy('start_time')->first())->date,
+                            'startTime' => optional($result['booking']->slots->sortBy('start_time')->first())->start_time ? \Carbon\Carbon::parse(optional($result['booking']->slots->sortBy('start_time')->first())->start_time)->format('H:i') : null,
+                            'endTime' => optional($result['booking']->slots->sortBy('start_time')->first())->start_time ? \Carbon\Carbon::parse(optional($result['booking']->slots->sortBy('start_time')->first())->start_time)->addMinutes($result['booking']->service->duration ?? 0)->format('H:i') : null,
+                        ])->render()
                     );
+
                 } catch (Exception $e) {
                     Log::error('Lỗi gửi mail: ' . $e->getMessage());
                 }

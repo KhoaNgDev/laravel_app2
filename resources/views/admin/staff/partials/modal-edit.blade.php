@@ -57,39 +57,76 @@
 
             </div>
             <div class="modal-footer">
-                <button type="submit" class="btn btn-primary" id="saveBtn">Cập Nhập</button>
+                <button type="submit" class="btn btn-primary" id="updateBtn">Cập Nhập</button>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
             </div>
 
-            <script>
-                document.getElementById('saveBtn').addEventListener('click', function(e) {
-                    const btn = e.target;
-                    btn.disabled = true;
-                    btn.innerHTML = 'Đang tải...';
-
-                    // Giả sử submit form bằng AJAX
-                    const form = btn.closest('form');
-                    fetch(form.action, {
-                            method: form.method,
-                            body: new FormData(form)
-                        })
-                        .then(res => res.json())
-                        .then(data => {
-                            btn.disabled = false;
-                            btn.innerHTML = 'Lưu';
-                            // xử lý kết quả
-                            console.log(data);
-                        })
-                        .catch(err => {
-                            btn.disabled = false;
-                            btn.innerHTML = 'Lưu';
-                            alert('Có lỗi xảy ra!');
-                        });
-
-                    e.preventDefault(); // ngăn form submit mặc định
-                });
-            </script>
 
         </form>
     </div>
 </div>
+@push('scripts')
+    <script>
+        document.getElementById('editUserForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const btn = document.getElementById('updateBtn');
+            btn.disabled = true;
+
+            // Hiển thị SweetAlert loading
+            Swal.fire({
+                title: 'Đang xử lý...',
+                text: 'Vui lòng chờ trong giây lát',
+                allowOutsideClick: false,
+                didOpen: () => Swal.showLoading()
+            });
+
+            const form = e.target;
+
+            fetch(form.action, {
+                    method: form.method,
+                    body: new FormData(form)
+                })
+                .then(async res => {
+                    const data = await res.json();
+
+                    if (res.ok) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Cập nhật thành công',
+                            text: data.message || 'Thông tin người dùng đã được cập nhật.'
+                        });
+                        // Có thể reset form hoặc đóng modal
+                        form.reset();
+                        const modal = bootstrap.Modal.getInstance(document.getElementById('editUserModal'));
+                        modal.hide();
+                    } else {
+                        // Nếu trả về lỗi validation từ Laravel
+                        let errorText = '';
+                        if (data.errors) {
+                            for (const key in data.errors) {
+                                errorText += `${data.errors[key].join(', ')}\n`;
+                            }
+                        } else {
+                            errorText = data.message || 'Có lỗi xảy ra!';
+                        }
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Lỗi',
+                            html: errorText.replace(/\n/g, '<br>')
+                        });
+                    }
+                })
+                .catch(err => {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Lỗi',
+                        text: 'Không thể kết nối tới server!'
+                    });
+                })
+                .finally(() => {
+                    btn.disabled = false;
+                });
+        });
+    </script>
+@endpush

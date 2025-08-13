@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Staff\StoreRequest;
 use App\Http\Requests\Admin\Staff\UpdateRequest;
 use App\Models\User;
-
+use Exception;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
@@ -35,61 +35,79 @@ class TechnicantController extends Controller
             User::create($data);
 
             DB::commit();
+
+            // Nếu request AJAX, trả về JSON
+            if ($request->ajax()) {
+                return response()->json([
+                    'message' => 'Người dùng đã được tạo thành công!'
+                ], 200);
+            }
+
+            // Nếu request bình thường, redirect
             session()->flash('success', 'Thêm người dùng thành công!');
             return redirect()->route('admin.users.index');
-        } catch (\Exception $e) {
+
+        } catch (Exception $e) {
             DB::rollBack();
+
+            if ($request->ajax()) {
+                return response()->json([
+                    'message' => 'Đã có lỗi xảy ra: ' . $e->getMessage()
+                ], 500);
+            }
+
             session()->flash('error', 'Đã có lỗi xảy ra: ' . $e->getMessage());
             return redirect()->back()->withInput();
         }
     }
 
-   public function update(UpdateRequest $request, $id)
-{
-    DB::beginTransaction();
 
-    try {
-        $user = User::findOrFail($id);
+    public function update(UpdateRequest $request, $id)
+    {
+        DB::beginTransaction();
 
-        $data = [];
+        try {
+            $user = User::findOrFail($id);
 
-        $data['name'] = $request->input('name');
-        $data['email'] = $request->input('email');
-        $data['phone'] = $request->input('phone');
-        $data['is_active'] = $request->input('is_active');
-        $data['group_role'] = $request->input('group_role');
+            $data = [];
 
-        if ($request->filled('password')) {
-            $data['password'] = Hash::make($request->password);
-        }
+            $data['name'] = $request->input('name');
+            $data['email'] = $request->input('email');
+            $data['phone'] = $request->input('phone');
+            $data['is_active'] = $request->input('is_active');
+            $data['group_role'] = $request->input('group_role');
 
-        if ($request->hasFile('photo')) {
-            if ($user->photo && file_exists(public_path($user->photo))) {
-                unlink(public_path($user->photo));
+            if ($request->filled('password')) {
+                $data['password'] = Hash::make($request->password);
             }
 
-            $file = $request->file('photo');
-            $fileName = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+            if ($request->hasFile('photo')) {
+                if ($user->photo && file_exists(public_path($user->photo))) {
+                    unlink(public_path($user->photo));
+                }
 
-            $file->move(public_path('uploads/user_images'), $fileName);
+                $file = $request->file('photo');
+                $fileName = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
 
-            $data['photo'] = 'uploads/user_images/' . $fileName;
+                $file->move(public_path('uploads/user_images'), $fileName);
+
+                $data['photo'] = 'uploads/user_images/' . $fileName;
+            }
+
+            $user->update($data);
+
+            DB::commit();
+
+            session()->flash('success', 'Cập nhật người dùng thành công!');
+            return redirect()->route('admin.users.index');
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            session()->flash('error', 'Đã có lỗi xảy ra: ' . $e->getMessage());
+            return redirect()->back()->withInput();
         }
-
-        $user->update($data);
-
-        DB::commit();
-
-        session()->flash('success', 'Cập nhật người dùng thành công!');
-        return redirect()->route('admin.users.index');
-
-    } catch (\Exception $e) {
-        DB::rollBack();
-
-        session()->flash('error', 'Đã có lỗi xảy ra: ' . $e->getMessage());
-        return redirect()->back()->withInput();
     }
-}
 
 
 }

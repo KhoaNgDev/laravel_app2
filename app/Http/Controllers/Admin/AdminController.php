@@ -51,7 +51,7 @@ class AdminController extends Controller
             $data->photo = $filename;
         }
         $data->save();
-        return redirect()->back()->with('messages', 'Cập nhập hồ sơ thành công');
+        return redirect()->back()->with('message', 'Cập nhập hồ sơ thành công');
 
     }
 

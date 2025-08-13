@@ -68,18 +68,42 @@
         const dateInput = document.getElementById('date');
 
         monthInput.addEventListener('change', function() {
-            if (this.value) {
-                dateInput.disabled = true;
-            } else {
-                dateInput.disabled = false;
-            }
+            dateInput.disabled = !!this.value;
         });
         dateInput.addEventListener('change', function() {
-            if (this.value) {
-                monthInput.disabled = true;
-            } else {
-                monthInput.disabled = false;
-            }
+            monthInput.disabled = !!this.value;
         });
+
+        // Loading khi submit form lọc
+        const filterForm = document.querySelector('form[action="{{ route('admin.bookings.index') }}"]');
+        filterForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            Swal.fire({
+                title: 'Đang lọc dữ liệu...',
+                text: 'Vui lòng chờ trong giây lát',
+                allowOutsideClick: false,
+                didOpen: () => Swal.showLoading()
+            });
+
+            setTimeout(() => this.submit(), 10);
+        });
+
+        // Loading khi click export Excel
+        const exportBtn = document.querySelector('a[href^="{{ route('admin.bookings.export') }}"]');
+        if (exportBtn) {
+            exportBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+
+                Swal.fire({
+                    title: 'Đang xuất Excel...',
+                    text: 'Vui lòng chờ trong giây lát',
+                    allowOutsideClick: false,
+                    didOpen: () => Swal.showLoading()
+                });
+
+                setTimeout(() => window.location.href = this.href, 10);
+            });
+        }
     </script>
 @endpush

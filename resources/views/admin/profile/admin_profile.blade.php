@@ -127,7 +127,7 @@
                     </div>
 
                     <div class="card-footer text-right">
-                        <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
+                        <button type="submit" class="btn btn-primary btn-loading">Lưu thay đổi</button>
                     </div>
                 </form>
             </div>

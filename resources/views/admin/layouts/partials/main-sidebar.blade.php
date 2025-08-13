@@ -61,13 +61,31 @@
       </aside>
   </div>
   <script type="text/javascript">
-      document.querySelectorAll('.btn-loading').forEach(btn => {
-          btn.addEventListener('click', function(e) {
-              if (btn.tagName.toLowerCase() === 'a') {
-                  e.preventDefault();
-                  setLoading(btn);
-                  window.location.href = btn.href;
-              }
-          });
-      });
-  </script>
+    function setLoading(btn) {
+        btn.classList.add('disabled');
+        btn.style.pointerEvents = 'none';
+        btn.dataset.originalText = btn.innerHTML; // lưu text gốc
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang tải...';
+    }
+
+    function resetButton(btn) {
+        btn.classList.remove('disabled');
+        btn.style.pointerEvents = 'auto';
+        if(btn.dataset.originalText) {
+            btn.innerHTML = btn.dataset.originalText;
+        }
+    }
+
+    document.querySelectorAll('.btn-loading').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            if (btn.tagName.toLowerCase() === 'a') {
+                e.preventDefault();
+                setLoading(btn);
+                // redirect sau 200ms để người dùng nhìn thấy "Đang tải..."
+                setTimeout(() => {
+                    window.location.href = btn.href;
+                }, 200);
+            }
+        });
+    });
+</script>

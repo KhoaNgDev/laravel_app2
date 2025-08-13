@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "2d2d4b665cfeb1437c84eca93822e34d",
+    "content-hash": "82cf7082f3f5ab72c5e8eb8187749d99",
     "packages": [
         {
             "name": "brick/math",
@@ -803,6 +803,69 @@
             "time": "2023-10-12T05:21:21+00:00"
         },
         {
+            "name": "getbrevo/brevo-php",
+            "version": "v2.0.10",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/getbrevo/brevo-php.git",
+                "reference": "29b47da0027353ea0c5e2c59e46ec9d600a9baab"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/getbrevo/brevo-php/zipball/29b47da0027353ea0c5e2c59e46ec9d600a9baab",
+                "reference": "29b47da0027353ea0c5e2c59e46ec9d600a9baab",
+                "shasum": ""
+            },
+            "require": {
+                "ext-curl": "*",
+                "ext-json": "*",
+                "ext-mbstring": "*",
+                "guzzlehttp/guzzle": "^7.4.0",
+                "php": ">=5.6"
+            },
+            "require-dev": {
+                "friendsofphp/php-cs-fixer": "~1.12",
+                "phpunit/phpunit": "^4.8",
+                "squizlabs/php_codesniffer": "~2.6"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.x.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Brevo\\Client\\": "lib/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Brevo Developers",
+                    "email": "contact@brevo.com",
+                    "homepage": "https://www.brevo.com/"
+                }
+            ],
+            "description": "Official Brevo provided RESTFul API V3 php library",
+            "homepage": "https://github.com/getbrevo/brevo-php",
+            "keywords": [
+                "api",
+                "brevo",
+                "php",
+                "sdk",
+                "swagger"
+            ],
+            "support": {
+                "issues": "https://github.com/getbrevo/brevo-php/issues",
+                "source": "https://github.com/getbrevo/brevo-php/tree/v2.0.10"
+            },
+            "time": "2025-08-01T11:22:26+00:00"
+        },
+        {
             "name": "graham-campbell/result-type",
             "version": "v1.1.3",
             "source": {
@@ -1274,6 +1337,73 @@
                 }
             ],
             "time": "2025-02-03T10:55:03+00:00"
+        },
+        {
+            "name": "hofmannsven/laravel-brevo",
+            "version": "2.1.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/hofmannsven/laravel-brevo.git",
+                "reference": "9c246f985ce0be875977b06c865b414c1c05d4cd"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/hofmannsven/laravel-brevo/zipball/9c246f985ce0be875977b06c865b414c1c05d4cd",
+                "reference": "9c246f985ce0be875977b06c865b414c1c05d4cd",
+                "shasum": ""
+            },
+            "require": {
+                "getbrevo/brevo-php": "^1.0|^2.0",
+                "illuminate/contracts": "^8.0|^9.0|^10.0|^11.0|^12.0",
+                "php": "^8.1"
+            },
+            "require-dev": {
+                "laravel/pint": "^1.14",
+                "nunomaduro/collision": "^7.0|^8.0",
+                "orchestra/testbench": "^6.0|^7.0|^8.0|^9.0|^10.0",
+                "phpunit/phpunit": "^10.1|^11.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "aliases": {
+                        "Brevo": "Hofmannsven\\Brevo\\Facades\\Brevo"
+                    },
+                    "providers": [
+                        "Hofmannsven\\Brevo\\BrevoServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Hofmannsven\\Brevo\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Sven Hofmann",
+                    "email": "info@hofmannsven.com",
+                    "homepage": "https://hofmannsven.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Laravel wrapper for Brevo's API v3 PHP library.",
+            "homepage": "https://github.com/hofmannsven/laravel-brevo",
+            "keywords": [
+                "brevo",
+                "laravel"
+            ],
+            "support": {
+                "email": "info@hofmannsven.com",
+                "issues": "https://github.com/hofmannsven/laravel-brevo/issues",
+                "source": "https://github.com/hofmannsven/laravel-brevo",
+                "wiki": "https://github.com/hofmannsven/laravel-brevo/wiki"
+            },
+            "time": "2025-05-23T13:43:17+00:00"
         },
         {
             "name": "laravel/framework",
@@ -3927,6 +4057,70 @@
                 "source": "https://github.com/ramsey/uuid/tree/4.9.0"
             },
             "time": "2025-06-25T14:20:11+00:00"
+        },
+        {
+            "name": "sendinblue/api-v3-sdk",
+            "version": "v8.4.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/sendinblue/APIv3-php-library.git",
+                "reference": "5d08398c7247a2f5d80f285d08a6dbe169f18eab"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/sendinblue/APIv3-php-library/zipball/5d08398c7247a2f5d80f285d08a6dbe169f18eab",
+                "reference": "5d08398c7247a2f5d80f285d08a6dbe169f18eab",
+                "shasum": ""
+            },
+            "require": {
+                "ext-curl": "*",
+                "ext-json": "*",
+                "ext-mbstring": "*",
+                "guzzlehttp/guzzle": "^7.4.0",
+                "php": ">=5.6"
+            },
+            "require-dev": {
+                "friendsofphp/php-cs-fixer": "~1.12",
+                "phpunit/phpunit": "^4.8",
+                "squizlabs/php_codesniffer": "~2.6"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "8.x.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "SendinBlue\\Client\\": "lib/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "SendinBlue Developers",
+                    "email": "contact@sendinblue.com",
+                    "homepage": "https://www.sendinblue.com/"
+                }
+            ],
+            "description": "Official SendinBlue provided RESTFul API V3 php library",
+            "homepage": "https://github.com/sendinblue/APIv3-php-library",
+            "keywords": [
+                "api",
+                "php",
+                "sdk",
+                "sendinblue",
+                "swagger"
+            ],
+            "support": {
+                "issues": "https://github.com/sendinblue/APIv3-php-library/issues",
+                "source": "https://github.com/sendinblue/APIv3-php-library/tree/v8.4.2"
+            },
+            "abandoned": "getbrevo/brevo-php",
+            "time": "2023-03-10T04:21:43+00:00"
         },
         {
             "name": "symfony/clock",

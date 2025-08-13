@@ -9,16 +9,19 @@ use App\Services\BookingService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\BookConfirm;
+use App\Services\BrevoService;
 use Exception;
 use Illuminate\Support\Facades\Log;
 
 class BookingController extends Controller
 {
     protected $bookingService;
+    protected $brevoService;
 
-    public function __construct(BookingService $bookingService)
+    public function __construct(BookingService $bookingService, BrevoService $brevoService)
     {
         $this->bookingService = $bookingService;
+        $this->brevoService = $brevoService;
     }
 
     public function Booking()
@@ -28,21 +31,16 @@ class BookingController extends Controller
 
     public function BookingStore(BookingRequest $request)
     {
-        // $lastSubmitted = session('last_booking_submit');
-
-        // if ($lastSubmitted && now()->diffInSeconds($lastSubmitted) < 30) {
-        //     return redirect()->back()->with('error', 'Bạn thao tác quá nhanh, vui lòng thử lại sau.');
-        // }
-
-        // session(['last_booking_submit' => now()]);
-
         $result = $this->bookingService->setupBooking($request);
 
         if ($result['status']) {
             if (!empty($result['booking'])) {
                 try {
-                    Mail::to($result['booking']->customer->customer_email)
-                        ->send(new BookConfirm($result['booking']));
+                    $this->brevoService->sendEmail(
+                        $result['booking']->customer->customer_email,
+                        'Xác nhận đặt lịch',
+                        view('mail.booking_mail', ['booking' => $result['booking']])->render()
+                    );
                 } catch (Exception $e) {
                     Log::error('Lỗi gửi mail: ' . $e->getMessage());
                 }
@@ -53,9 +51,6 @@ class BookingController extends Controller
 
         return redirect()->back()->withInput()->with('error', $result['message']);
     }
-
-
-
     public function GetServices()
     {
         return response()->json(

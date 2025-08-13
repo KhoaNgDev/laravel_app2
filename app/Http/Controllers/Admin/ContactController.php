@@ -3,13 +3,19 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Mail\AdminContactReply;
 use App\Models\Testimonial;
+use App\Services\BrevoService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 
 class ContactController extends Controller
 {
+       protected $brevoService;
+
+    public function __construct(BrevoService $brevoService)
+    {
+        $this->brevoService = $brevoService;
+    }
     public function contactList(Request $request)
     {
         $query = Testimonial::query();
@@ -65,7 +71,7 @@ class ContactController extends Controller
         return redirect()->route('admin.contacts.show', $testimonial->id)
             ->with('success', 'Cập nhật đánh giá thành công.');
     }
-    public function reply(Request $request, $id)
+     public function reply(Request $request, $id)
     {
         $request->validate([
             'admin_note' => 'required|string|min:5',
@@ -76,7 +82,15 @@ class ContactController extends Controller
         $data->status = 'responded';
         $data->save();
 
-        Mail::to($data->email)->send(new AdminContactReply($data));
+        $subject = 'Phản hồi từ Admin';
+        $content = view('mail.contact_reply', compact('data'))->render();
+
+        $this->brevoService->sendEmail(
+            $data->email,       
+            $data->name ?? 'Quý khách hàng', 
+            $subject,
+            $content
+        );
 
         return response()->json(['message' => 'Phản hồi đã được gửi thành công']);
     }

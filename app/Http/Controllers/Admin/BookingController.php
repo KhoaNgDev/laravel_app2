@@ -11,8 +11,7 @@ use App\Models\BookingSlot;
 use App\Models\User;
 use Exception;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Mail;
+use App\Services\BrevoService;
 use Maatwebsite\Excel\Facades\Excel;
 
 class BookingController extends Controller
@@ -51,6 +50,7 @@ class BookingController extends Controller
         return view('admin.bookings.index', compact('bookings', 'technicians'));
     }
 
+
     public function updateStatus(Request $request, $id)
     {
         try {
@@ -65,17 +65,20 @@ class BookingController extends Controller
 
             if ($request->status === 'canceled') {
                 BookingSlot::where('booking_id', $booking->id)->delete();
-
-                $note = $request->input('note', null);
-                $booking->canceled_note = $note; 
+                $booking->canceled_note = $request->input('note', null);
             }
 
             $booking->status = $request->status;
             $booking->save();
 
             if ($request->status === 'canceled' && $booking->customer?->customer_email) {
-                Mail::to($booking->customer->customer_email)
-                    ->send(new BookingCanceledMail($booking));
+                // Gửi qua Brevo API
+                $brevo = new BrevoService();
+                $brevo->sendEmail(
+                    $booking->customer->customer_email,
+                    'Xác nhận huỷ lịch đặt dịch vụ',
+                    view('mail.booking_canceled', ['booking' => $booking])->render()
+                );
             }
 
             return response()->json([

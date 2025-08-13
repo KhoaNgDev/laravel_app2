@@ -4,15 +4,18 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use App\Models\Booking;
+use Exception;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Mail;
-use App\Mail\BookingCanceledMail;
+use SendinBlue\Client\Configuration;
+use SendinBlue\Client\Api\TransactionalEmailsApi;
+use SendinBlue\Client\Model\SendSmtpEmail;
+use GuzzleHttp\Client;
 
 class CancelExpiredBookings extends Command
 {
     protected $signature = 'bookings:cancel-expired';
-    protected $description = 'Huỷ booking quá hạn và gửi mail cho khách hàng';
+    protected $description = 'Huỷ booking quá hạn và gửi mail qua Brevo cho khách hàng';
 
     public function handle()
     {
@@ -27,19 +30,39 @@ class CancelExpiredBookings extends Command
 
             $count = 0;
 
+            // Cấu hình Brevo
+            $config = Configuration::getDefaultConfiguration()
+                ->setApiKey('api-key', config('services.brevo.key'));
+            $brevoApi = new TransactionalEmailsApi(new Client(), $config);
+
             foreach ($bookings as $booking) {
-                $booking->status = 'canceled'; 
+                $booking->status = 'canceled';
                 $booking->save();
                 $count++;
 
                 if ($booking->customer && $booking->customer->customer_email) {
-                    Mail::to($booking->customer->customer_email)
-                        ->send(new BookingCanceledMail($booking));
+                    $email = new SendSmtpEmail([
+                        'to' => [
+                            ['email' => $booking->customer->customer_email, 'name' => $booking->customer->customer_name]
+                        ],
+                        'sender' => [
+                            'name' => config('mail.from.name'),
+                            'email' => config('mail.from.address')
+                        ],
+                        'subject' => 'Xác nhận huỷ lịch đặt dịch vụ',
+                        'htmlContent' => view('mail.booking_canceled', ['booking' => $booking])->render(),
+                    ]);
+
+                    try {
+                        $brevoApi->sendTransacEmail($email);
+                    } catch (Exception $e) {
+                        Log::error("[Scheduler] Gửi mail thất bại: " . $e->getMessage());
+                    }
                 }
             }
 
-            Log::info("[Scheduler] Đã huỷ $count booking quá hạn và gửi mail.");
-        } catch (\Exception $e) {
+            Log::info("[Scheduler] Đã huỷ $count booking quá hạn và gửi mail qua Brevo.");
+        } catch (Exception $e) {
             Log::error("[Scheduler] Lỗi: " . $e->getMessage());
         }
     }

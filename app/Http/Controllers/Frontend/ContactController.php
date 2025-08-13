@@ -9,6 +9,9 @@ use App\Models\Testimonial;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
+use SendinBlue\Client\Configuration;
+use SendinBlue\Client\Api\TransactionalEmailsApi;
+use SendinBlue\Client\Model\SendSmtpEmail;
 class ContactController extends Controller
 {
     public function contact()
@@ -17,10 +20,6 @@ class ContactController extends Controller
     }
     public function submitContactForm(ContactRequest $request)
     {
-        // $lastSubmitted = session('last_contact_submit');
-        // if ($lastSubmitted && now()->diffInSeconds($lastSubmitted) < 60) {
-        //     return redirect()->back()->with('error', 'Bạn vừa gửi, vui lòng thử lại sau 1 phút.');
-        // }
 
         DB::beginTransaction();
         try {
@@ -34,8 +33,24 @@ class ContactController extends Controller
 
             DB::commit();
 
+
             if (!empty($contact->email)) {
-                Mail::to($contact->email)->send(new ContactMail($contact));
+                $config = Configuration::getDefaultConfiguration()
+                    ->setApiKey('api-key', config('services.brevo.key'));
+
+                $apiInstance = new TransactionalEmailsApi(
+                    new \GuzzleHttp\Client(),
+                    $config
+                );
+
+                $sendSmtpEmail = new SendSmtpEmail([
+                    'subject' => 'Cảm ơn bạn đã liên hệ',
+                    'sender' => ['name' => config('mail.from.name'), 'email' => config('mail.from.address')],
+                    'to' => [['email' => $contact->email, 'name' => $contact->name]],
+                    'htmlContent' => view('emails.contact', compact('contact'))->render(),
+                ]);
+
+                $apiInstance->sendTransacEmail($sendSmtpEmail);
             }
 
             session(['last_contact_submit' => now()]);

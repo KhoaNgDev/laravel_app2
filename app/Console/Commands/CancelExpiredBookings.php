@@ -32,7 +32,7 @@ class CancelExpiredBookings extends Command
 
             // Cấu hình Brevo
             $config = Configuration::getDefaultConfiguration()
-                ->setApiKey('api-key', config('services.brevo.key'));
+                ->setApiKey('api-key', config('services.brevo.api_key'));
             $brevoApi = new TransactionalEmailsApi(new Client(), $config);
 
             foreach ($bookings as $booking) {

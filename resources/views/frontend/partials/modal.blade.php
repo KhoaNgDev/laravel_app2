@@ -28,7 +28,7 @@
         <script type="text/javascript"">
                 Swal.fire({
                     icon: 'error',
-                    title: 'Validation Error',
+                    title: 'Có lỗi xảy ra, vui lòng kiểm tra lại',
                     html: `{!! implode('<br>', $errors->all()) !!}`,
                 });
             </script>
